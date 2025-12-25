@@ -28,10 +28,10 @@ import {
 } from "../../components/column";
 import { useLiveify } from "../../components/liveify";
 import {
-    useSpoolmanFilamentFilter,
+    useSpoolmanFilamentFilter, useSpoolmanFilamentNames,
     useSpoolmanLocations,
     useSpoolmanLotNumbers,
-    useSpoolmanMaterials,
+    useSpoolmanMaterials, useSpoolmanVendors,
 } from "../../components/otherModels";
 import { removeUndefined } from "../../utils/filtering";
 import { EntityType, useGetFields } from "../../utils/queryFields";
@@ -48,6 +48,8 @@ interface ISpoolCollapsed extends ISpool {
   "filament.combined_name": string; // Eg. "Prusa - PLA Red"
   "filament.id": number;
   "filament.material"?: string;
+    "filament.name"?: string;
+    "filament.vendor.name"?: string;
 }
 
 function collapseSpool(element: ISpool): ISpoolCollapsed {
@@ -65,6 +67,8 @@ function collapseSpool(element: ISpool): ISpoolCollapsed {
     "filament.combined_name": filament_name,
     "filament.id": element.filament.id,
     "filament.material": element.filament.material,
+      "filament.name": element.filament.name, // Hinzufügen
+      "filament.vendor.name": element.filament.vendor?.name,
   };
 }
 
@@ -79,7 +83,8 @@ const namespace = "spoolList-v2";
 
 const allColumns: (keyof ISpoolCollapsed & string)[] = [
   "id",
-  "filament.combined_name",
+  "filament.name",
+  "filament.vendor.name",
   "filament.material",
   "price",
   "used_weight",
@@ -355,8 +360,8 @@ export const SpoolList: React.FC<IResourceComponentsProps> = () => {
           }),
           SpoolIconColumn({
             ...commonProps,
-            id: "filament.combined_name",
-            i18nkey: "spool.fields.filament_name",
+            id: "filament.name",
+              i18nkey: "spool.fields.filament_name",
             color: (record: ISpoolCollapsed) =>
               record.filament.multi_color_hexes
                 ? {
@@ -364,9 +369,16 @@ export const SpoolList: React.FC<IResourceComponentsProps> = () => {
                     vertical: record.filament.multi_color_direction === "longitudinal",
                   }
                 : record.filament.color_hex,
-            dataId: "filament.combined_name",
-            filterValueQuery: useSpoolmanFilamentFilter(),
+            dataId: "filament.name",
+            filterValueQuery: useSpoolmanFilamentNames(),
           }),
+            FilteredQueryColumn({
+                ...commonProps,
+                id: "filament.vendor.name",
+                i18nkey: "filament.fields.vendor_name",
+                dataId: "filament.vendor.name",
+                filterValueQuery: useSpoolmanVendors(),
+            }),
           FilteredQueryColumn({
             ...commonProps,
             id: "filament.material",
