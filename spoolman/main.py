@@ -1,5 +1,6 @@
 """Main entrypoint to the server."""
 
+import mimetypes
 import logging
 import subprocess
 from logging.handlers import TimedRotatingFileHandler
@@ -47,6 +48,7 @@ if access_handlers:
 # Get logger instance for this module
 logger = logging.getLogger(__name__)
 
+mimetypes.add_type('application/javascript', '.js')
 
 # Setup FastAPI
 app = FastAPI(
