@@ -76,7 +76,7 @@ function translateColumnI18nKey(columnName: string): string {
   columnName = columnName.replace(".", "_");
   if (columnName === "filament_combined_name") columnName = "filament_name";
   else if (columnName === "filament_material") columnName = "material";
-  else if (columnName === "filament_vendor") columnName = "filament.vendor";
+  else if (columnName === "filament_vendor.name") return "filament.fields.vendor";
   return `spool.fields.${columnName}`;
 }
 
